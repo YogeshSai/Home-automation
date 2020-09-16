@@ -1,4 +1,5 @@
 // Credits to be given if used in commercial spaces
+// Download the app from this link ---> https://drive.google.com/file/d/1H6pjEyCC0VRTCOrKT1-qtsLkmBtahOqj/view?usp=sharing
 
 #include "BluetoothSerial.h"  // including blutooth 
 #include <WiFi.h>  // including wifi
