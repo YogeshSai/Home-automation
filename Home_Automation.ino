@@ -1,53 +1,61 @@
-#include "BluetoothSerial.h"
-#include <WiFi.h>
-#include "Adafruit_MQTT.h"
-#include "Adafruit_MQTT_Client.h"
+// Credits to be given if used in commercial spaces
+
+#include "BluetoothSerial.h"  // including blutooth 
+#include <WiFi.h>  // including wifi
+#include "Adafruit_MQTT.h"  // including And calling ADAFRUIT, login https://io.adafruit.com/ here and create your triggers
+#include "Adafruit_MQTT_Client.h" // intializing Adafruit web server as a client
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run
 `make menuconfig` to and enable it
 #endif
 
-
 BluetoothSerial SerialBT;
 
+int bluedata;  // Data recieved from the bluetooth app which I linked
+int relay1 = 12;  // connecting relay 1 to GPIO 12 of ESP32
+int relay2 = 2;  // Connecting relay 2 to GPIO 2 of ESP32
 
-int bluedata;
-int relay1 = 12;
-int relay2 = 2;
+//I have called these relay triggers twice because top one is for Bluetooth and the below one is for MQTT server 
+
 #define Relay2  2
 #define Relay1 12
 
-#define WLAN_SSID       "Redmi"
-#define WLAN_PASS       "yoyoyo@2002"
+// You can add many output triggers in view of the output pins
+
+#define WLAN_SSID       "Your SSID"
+#define WLAN_PASS       "Your wifi password"
 
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
-#define AIO_USERNAME    "Yogesh34"
-#define AIO_KEY         "aio_pPgP35qX1Duc3gfdYUDr1jWk61G8"
+#define AIO_USERNAME    "Your Adafruit username"           // You will find this in your profile
+#define AIO_KEY         "aio_xxxxxxxxxxxxxxxxxxxxx"        // You will find this in your profile
+
+// Calling Adafruit MQTT functions
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
 
 Adafruit_MQTT_Publish Light = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/light");
-Adafruit_MQTT_Subscribe Light1 = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/relay-1");
-Adafruit_MQTT_Subscribe Light2 = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/relay-2");
+Adafruit_MQTT_Subscribe Light1 = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/xxxxxx"); // Change the trigger names in the x's
+Adafruit_MQTT_Subscribe Light2 = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/xxxxxx"); // Change the trigger names in the x's
 
-void MQTT_connect();
+void MQTT_connect(); // Refer down for this function
 
 void setup() {
   Serial.begin(9600);
 
-  btStart();  Serial.println("Bluetooth On");
+  btStart(); // Turning ON bluetooth in ESP32
+  Serial.println("Bluetooth On");
 
-  SerialBT.begin("ESP32_Bluetooth"); //Bluetooth device name
+  SerialBT.begin("ESP32_Bluetooth"); //Bluetooth device name, Even you can name your bluetooth device
   Serial.println("The device started, now you can pair it with bluetooth!");
   delay(1000);
   
   pinMode(Relay1, OUTPUT);
   pinMode(Relay2, OUTPUT);
 
-  Serial.println(F("Adafruit MQTT demo"));
+  Serial.println(F("Adafruit MQTT"));
 
   // Connect to WiFi access point.
   Serial.println(); Serial.println();
@@ -66,7 +74,7 @@ void setup() {
   Serial.println(WiFi.localIP());
   
   // Setup MQTT subscription for onoff feed.
-  mqtt.subscribe(&Light1);
+  mqtt.subscribe(&Light1); 
   mqtt.subscribe(&Light2);
   
 }
